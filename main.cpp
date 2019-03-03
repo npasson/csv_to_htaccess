@@ -21,7 +21,7 @@
 
 #include "functions.hpp"
 
-constexpr const char* version    = "0.2";
+constexpr const char* version    = "0.2.1";
 constexpr const char* delimiters = ";,\t";
 
 
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 			prefix.open(prefix_path);
 			if (!prefix) {
 				std::cerr
-						<< "Could not open file: " << argv[1]
+						<< "Could not open file: " << prefix_path
 						<< std::endl;
 				exit(1);
 			} else {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 			suffix.open(suffix_path);
 			if (!prefix) {
 				std::cerr
-						<< "Could not open file: " << argv[1]
+						<< "Could not open file: " << suffix_path
 						<< std::endl;
 				suffix.close();
 				exit(1);
