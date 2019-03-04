@@ -146,8 +146,10 @@ int main(int argc, char* argv[]) {
 	\* ************************************************************ */
 
 	// initialize regex
-	const std::regex reg_get_domain = std::regex(R"(^((?:https?:\/\/)?(?:[A-Za-z]+\.)+[A-Za-z]+)/)");
-	const std::regex reg_get_path   = std::regex(R"(^(?:(?:https?:\/\/)?(?:(?:[A-Za-z]+\.)+[A-Za-z]+))?\/?(.*)$)");
+	const std::regex reg_get_from_domain = std::regex(R"(^((?:https?:\/\/)?(?:[A-Za-z]+\.)+[A-Za-z]+)/)");
+	const std::regex reg_get_from_path   = std::regex(R"(^(?:(?:https?:\/\/)?(?:(?:[A-Za-z]+\.)+[A-Za-z]+))?\/?(.*)$)");
+	const std::regex reg_get_to_domain   = std::regex(R"(^((?:https?:\/\/)(?:[A-Za-z]+\.)+[A-Za-z]+)/)");
+	const std::regex reg_get_to_path     = std::regex(R"(^(?:(?:https?:\/\/)(?:(?:[A-Za-z]+\.)+[A-Za-z]+))?\/?(.*)$)");
 
 	// initialize FROM
 	//std::unordered_map<unsigned int, std::string> from {};
@@ -180,27 +182,33 @@ int main(int argc, char* argv[]) {
 		std::string from_fullpath = tokens[0];
 		std::string to_fullpath   = tokens[1];
 
+		// clean up strings
+		for (char ch : std::initializer_list<char> {'\n', '\r', '\0'}) {
+			from_fullpath.erase(std::remove(from_fullpath.begin(), from_fullpath.end(), ch), from_fullpath.end());
+			to_fullpath.erase(std::remove(to_fullpath.begin(), to_fullpath.end(), ch), to_fullpath.end());
+			status_code.erase(std::remove(status_code.begin(), status_code.end(), ch), status_code.end());
+		}
 
 		auto matches = std::cmatch {};
 
 		// set from-prefix if found
-		if (std::regex_match(from_fullpath.c_str(), matches, reg_get_domain)) {
+		if (std::regex_match(from_fullpath.c_str(), matches, reg_get_from_domain)) {
 			from_domain = matches[1];
 		}
 
 		// set to-prefix if found, otherwise assume same domain
-		if (std::regex_match(to_fullpath.c_str(), matches, reg_get_domain)) {
+		if (std::regex_match(to_fullpath.c_str(), matches, reg_get_to_domain)) {
 			to_domain = matches[1];
 		} else {
 			to_domain = from_domain;
 		}
 
 		// set to-path
-		std::regex_match(from_fullpath.c_str(), matches, reg_get_path);
+		std::regex_match(from_fullpath.c_str(), matches, reg_get_from_path);
 		from_path = matches[1];
 
 		// set from-path
-		std::regex_match(to_fullpath.c_str(), matches, reg_get_path);
+		std::regex_match(to_fullpath.c_str(), matches, reg_get_to_path);
 		to_path = matches[1];
 
 		// only add domain to `to` if they're different
