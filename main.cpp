@@ -21,7 +21,7 @@
 
 #include "functions.hpp"
 
-constexpr const char* version    = "0.2.1";
+constexpr const char* version    = "0.2.3";
 constexpr const char* delimiters = ";,\t";
 
 
