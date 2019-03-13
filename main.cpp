@@ -139,6 +139,9 @@ int main(int argc, char* argv[]) {
 				<< "# BEGIN GENERATOR PREFIX\n\n"
 				<< get_file_contents(prefix_path) << "\n\n"
 				<< "# END GENERATOR PREFIX\n\n";
+	} else {
+		htaccess
+				<<"RewriteEngine On\n\n";
 	}
 
 	/* ************************************************************ *\
